@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 // @ts-expect-error
 import SimpleImage from "./img.jpg";
 import {
@@ -12,6 +12,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+
+const { width, height } = Dimensions.get("window");
 
 export default function App() {
   const scale = useSharedValue(1);
@@ -31,7 +33,24 @@ export default function App() {
     });
 
   const dImageStyle = useAnimatedStyle(() => {
-    return { transform: [{ scale: scale.value }] };
+    return {
+      transform: [
+        // Translate the image to focal point
+        { translateX: focalX.value },
+        { translateY: focalY.value },
+        // Translate the image such that the center of the image is in focal point
+        { translateX: -width / 2 },
+        { translateY: -height / 2 },
+        // Scale the image after these 2 above happens
+        { scale: scale.value },
+        // Removing applied translate to focus on user intended place
+        { translateX: -focalX.value },
+        { translateY: -focalY.value },
+        // Remove the centering image to show full image
+        { translateX: width / 2 },
+        { translateY: height / 2 },
+      ],
+    };
   });
 
   const dFocalPointStyle = useAnimatedStyle(() => {
