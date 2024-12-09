@@ -20,6 +20,7 @@ export default function App() {
       onScroll={scrollHandler}
       scrollEventThrottle={16} // 1000/16 = 60 which is like 60Hz animation
       // snapToInterval={Dimensions.get("window").width}
+      pagingEnabled
     >
       {WORDS.map((title, index) => (
         <Page key={title} {...{ index, title }} translateX={translateX} />

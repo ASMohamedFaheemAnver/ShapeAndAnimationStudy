@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -25,10 +25,37 @@ const Page: React.FC<PageProps> = ({ index, title, translateX }) => {
       [0, 1, 0], // Change scale from 0 to 1 to 0
       Extrapolation.CLAMP // Avoid overflow and force the output range to [0, 1, 0], otherwise this will predict the value on overflow translateX.value / width
     );
+
+    const borderRadius = interpolate(
+      Number(translateX.value / width),
+      [index - 1, index, index + 1],
+      [0, Number(SIZE / 2), 0],
+      Extrapolation.CLAMP
+    );
+
     return {
       // Can just put { scale }, but I wanna be more explicit for examples for future me
       transform: [{ scale: scale }],
+      borderRadius,
     };
+  });
+
+  const dTitleStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      Number(translateX.value / width),
+      [index - 1, index, index + 1],
+      [200, 0, -200], // From 200 below to center to 200 up
+      Extrapolation.CLAMP
+    );
+
+    const opacity = interpolate(
+      Number(translateX.value / width),
+      [index - 1, index, index + 1],
+      [0, 1, 0],
+      Extrapolation.CLAMP
+    );
+
+    return { transform: [{ translateY }], opacity };
   });
 
   return (
@@ -41,6 +68,9 @@ const Page: React.FC<PageProps> = ({ index, title, translateX }) => {
       ]}
     >
       <Animated.View style={[styles.square, dSquareStyle]} />
+      <Animated.View style={[styles.titleContainer, dTitleStyle]}>
+        <Text style={styles.title}>{title}</Text>
+      </Animated.View>
     </View>
   );
 };
@@ -56,6 +86,15 @@ const styles = StyleSheet.create({
     width: SIZE,
     height: SIZE,
     backgroundColor: "rgba(0, 0, 255, 0.4)",
+  },
+  titleContainer: {
+    position: "absolute",
+  },
+  title: {
+    fontSize: 72,
+    color: "white",
+    textTransform: "uppercase",
+    fontWeight: "700",
   },
 });
 
