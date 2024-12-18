@@ -1,1 +1,4 @@
 # https://www.npmjs.com/package/svg-path-properties
+# https://www.youtube.com/playlist?list=PLjHsmVtnAr9TWoMAh-3QMiP7bPUqPFuFZ
+
+npx create-expo-app --template blank-typescript
